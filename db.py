@@ -4,10 +4,11 @@ from datetime import datetime
 db=sqlite3.connect('mock_server.db')
 
 #------------------------------------------------------
-# Cambiar datos segun la tabla a crear y luego insertar
-# line 11 
-# line 35
-# line 36
+# Este Script permite crear tablas en una base de datos sqlite3, transformando data de un archivo JSON a SQL.
+# Se debe cambiar los datos de este script segun la tabla a crear y luego insertar:
+# line 14 (json que se leera y guardara en base de datos)
+# line 36 (tabla a crear)
+# line 37 (tabla en donde se insertara la data)
 #------------------------------------------------------
 
 with open('products.json', encoding='utf-8-sig') as json_file:

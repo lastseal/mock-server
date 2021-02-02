@@ -21,7 +21,9 @@ def GetProducts():
     
     condition = ""
     order_by = ""
-    #status OK
+
+    #Obtaining parameters from the url 
+
     if('status' in request.args):      
         status = str(request.args.get('status'))
         list_status = modifyParameter(status)
@@ -35,7 +37,6 @@ def GetProducts():
         else:
             condition = " AND " +(c+"("+c_in)[:-1]+")"
 
-    #fields OK
     if('fields' in request.args): 
         fields = ""     
         fieldsParam = str(request.args.get('fields'))
@@ -48,7 +49,6 @@ def GetProducts():
 
             fields = fields[:-1]
 
-    #locked OK
     if('locked' in request.args):      
         locked = request.args.get('locked')
                    
@@ -57,7 +57,6 @@ def GetProducts():
         else:
             condition += " AND locked = " + "'"  + locked + "'"
         
-    #deleted OK
     if('deleted' in request.args):      
         deleted = request.args.get('deleted')
                    
@@ -66,7 +65,6 @@ def GetProducts():
         else:
             condition += " AND deleted = " + "'"  + deleted + "'"
 
-    #completed OK
     if('completed' in request.args):      
         completed = request.args.get('completed')
                    
@@ -75,7 +73,6 @@ def GetProducts():
         else:
             condition += " AND completed = " + "'"  + completed + "'"
 
-    #product_type OK
     if('product_type' in request.args):
         product_type = str(request.args.get('product_type'))
         c = "product_type = '"+product_type+"'"
@@ -85,7 +82,6 @@ def GetProducts():
         else:
             condition += " AND " + c
 
-    #order_name OK
     if('order_name' in request.args):
         order_name = str(request.args.get('order_name'))
         c = "order_name = '#"+order_name+"'"
@@ -95,7 +91,6 @@ def GetProducts():
         else:
             condition += " AND " + c
 
-    #variant_name OK
     if('variant_name' in request.args):
         variant_name = str(request.args.get('variant_name'))
         c = "variant_name = '"+variant_name+"'"
@@ -105,15 +100,15 @@ def GetProducts():
         else:
             condition += " AND " + c
 
-    #order by OK
     if('order_by' in request.args):
         param = str(request.args.get('order_by'))
         order_by = " ORDER BY " + param
     
     # Querys by diferents end points
     #-------------------------------------------------------------------------------------------
+    # EXAMPLE : /api/products?fields=all OR /api/products?fields=variant_name&status=producing
     if(request.path == "/api/products"):
-        print(condition)
+
         try:
             connection = sql.connect("mock_server.db")
             connection.row_factory = dict_factory
@@ -132,14 +127,15 @@ def GetProducts():
         finally:
             connection.close() 
             return jsonify(results)
-            
+
+    #EXAMPLE : /api/products/count?status=printing&product_type=Espejos     
     elif(request.path == "/api/products/count"):
         
         try:
             connection = sql.connect("mock_server.db")
             connection.row_factory = dict_factory
             cursor = connection.cursor()
-            cursor.execute("""SELECT COUNT(*) as count,
+            cursor.execute("""SELECT SUM(quantity) as count,
                                      COUNT(*) as total
                               FROM products"""
                               + condition)
